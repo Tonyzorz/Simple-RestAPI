@@ -14,12 +14,20 @@ public class FoodStorage {
 	public int food;
 	public String name;
 	
-	public FoodStorage() {
+	private FoodStorage() {
 		this.animal = new ArrayList<Animals>();
 		this.animal.add(new Turtle("turquoise"));
 		this.animal.get(0).setId(idGenerator());
 		this.food = 2000;
 		this.name = "Tom";
+	}
+	
+	private static class SingletonClass{
+		private static FoodStorage CREATE = new FoodStorage();
+	}
+	
+	public static FoodStorage getInstance(){
+		return SingletonClass.CREATE;
 	}
 
 	public void feed() {

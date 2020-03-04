@@ -1,4 +1,4 @@
-package com.project.cudo;
+package com.project.cudo.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -42,22 +42,31 @@ public class AnimalController {
 		return animalService.feedAnimals(fs);
 	}
 	
-	//update list
+	//update list one animal
+	@RequestMapping(value = "/updateAnimal/{id}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Map<?,?> updateAnimal(@PathVariable String id, @RequestBody FoodStorage fs){
+		return animalService.updateAnimal(id, fs);
+	}
 	
 	//delete list
 	@ResponseBody
-	@RequestMapping(value = "/deleteAnimals", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/deleteAnimals", method = RequestMethod.DELETE)
 	public String deleteAnimals(){
 		animalService.deleteAnimals();
 		return "Freed all the pets";
 	}
+
 	//delete by id
-	
 	@RequestMapping(value = "/deleteAnimal/{id}", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<?,?> deleteAnimal(@PathVariable String id){
-		
 		return animalService.deleteAnimal(id);
 	}
+	
 	//find by id
+	@RequestMapping(value = "/getAnimal/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<?,?> getAnimal(@PathVariable("id") String id){
+		return animalService.getAnimal(id);
+	}
+	
 	
 }

@@ -14,8 +14,11 @@ import com.project.cudo.dao.FoodStorage;
 public class AnimalService {
 	
 	//DataBase
-	FoodStorage foodStorage = new FoodStorage();
+	FoodStorage foodStorage = FoodStorage.getInstance();
+	//에러 체크 클래스 
+	ErrorCodes errorCodes = new ErrorCodes();
 	
+	//등록된 동물 전체 가져오기 
 	public List<Animals> getAnimals(){
 		return foodStorage.getAnimal();
 	}
@@ -23,7 +26,7 @@ public class AnimalService {
 	//동물 등록 
 	public Map<?,?> registerAnimals(FoodStorage fs){
 		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
-		userCheck(fs, jsonStorage);
+		errorCodes.userCheck(fs, jsonStorage);
 		
 		//false시 등록된 이름이 존재하고
 		//true시 등록된 이름이 없다 
@@ -39,20 +42,14 @@ public class AnimalService {
 		}
 		
 		if(!flag){
-			jsonStorage.put("res_code", ErrorCodes.RES_CODE_30101);
-			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_30101);
-			jsonStorage.put("res_data", fs.getAnimal());
+			errorCodes.exist(fs, jsonStorage);
 		} else {
 			for(int i = 0; i < fs.getAnimal().size(); i++){
 				fs.getAnimal().get(i).setId(foodStorage.idGenerator());
 				foodStorage.getAnimal().add(fs.getAnimal().get(i));
 			}
-			jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
-			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
-			jsonStorage.put("res_data", foodStorage.getAnimal());
+			errorCodes.success(fs, jsonStorage);
 		}
-			
-		
 		
 		return jsonStorage;
 	}
@@ -62,7 +59,7 @@ public class AnimalService {
 		System.out.println(foodStorage.toString());
 		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
 		
-		userCheck(fs, jsonStorage);
+		errorCodes.userCheck(fs, jsonStorage);
 		
 		//flag는 동물 아이디가 존재여부 확인 
 		//false = id가 없다
@@ -93,9 +90,7 @@ public class AnimalService {
 		}
 		
 		if(!flag){
-			jsonStorage.put("res_code", ErrorCodes.RES_CODE_30102);
-			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_30102);
-			jsonStorage.put("res_data", fs.getAnimal());
+			errorCodes.noId(fs, jsonStorage);
 		} else {
 			jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
 			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
@@ -105,22 +100,82 @@ public class AnimalService {
 		return jsonStorage;
 	}
 	
+	//동물들다 해방 
 	public void deleteAnimals(){
 		foodStorage.getAnimal().clear();
 	}
 	
+	//해당 아이디 동물 해방 
 	public Map<?,?> deleteAnimal(String id){
 		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
-		foodStorage.getAnimal().remove(id);
-		jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
-		jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
+		
+		boolean flag = false;
+		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
+			if(foodStorage.getAnimal().get(i).getId().equals(id)){
+				foodStorage.getAnimal().remove(i);
+				flag = true;
+				break;
+			}
+		}
+		if(flag){
+			jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
+			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
+		} else {
+			jsonStorage.put("res_code", ErrorCodes.RES_CODE_30102);
+			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_30102);
+			jsonStorage.put("res_data", foodStorage.getAnimal());
+		}
+		
 		return jsonStorage;
 	}
-	//유저 체크
-	public void userCheck(FoodStorage fs, Map<String,Object> jsonStorage){
-		if(!fs.name.equals(foodStorage.getName())){
-			jsonStorage.put("res_code", ErrorCodes.RES_CODE_30100);
-			jsonStorage.put("res_msg", foodStorage.getName()+ErrorCodes.RES_MSG_30100);
+	
+	//해당 아이디 동물 가져오기 
+	public Map<?,?> getAnimal(String id){
+		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
+		
+		int place = 0;
+		boolean flag = false;
+		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
+			if(foodStorage.getAnimal().get(i).getId().equals(id)){
+				place = i;
+				flag = true;
+				break;
+			}
 		}
+		if(flag){
+			jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
+			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
+			jsonStorage.put("res_data", foodStorage.getAnimal().get(place));
+
+		} else {
+			jsonStorage.put("res_code", ErrorCodes.RES_CODE_30102);
+			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_30102);
+			jsonStorage.put("res_data", foodStorage.getAnimal());
+		}
+		
+		return jsonStorage;
 	}
+	
+	//해당 아이디 동물 정보 업데이트 
+	public Map<?,?> updateAnimal(String id, FoodStorage fs){
+		System.out.println(fs.toString());
+		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
+		int place = 0;
+		boolean flag = false;
+		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
+			if(foodStorage.getAnimal().get(i).getId().equals(id)){
+				place = i;
+				flag = true;
+				foodStorage.getAnimal().get(i).setName(fs.getAnimal().get(0).getName());
+				break;
+			}
+		}
+		if(flag){
+			errorCodes.exist(fs, jsonStorage);
+		} else {
+			errorCodes.noId(fs, jsonStorage);
+		}
+		return jsonStorage;
+	}
+	
 }
