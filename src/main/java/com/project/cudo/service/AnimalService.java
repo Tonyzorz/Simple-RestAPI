@@ -7,16 +7,15 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.project.cudo.dao.Animals;
-import com.project.cudo.dao.ErrorCodes;
 import com.project.cudo.dao.FoodStorage;
+import com.project.cudo.util.ErrorCodes;
+import com.project.cudo.util.JsonStorageUtil;
 
 @Service("AnimalService")
 public class AnimalService {
 	
-	//DataBase
+	//임시 메모리 
 	FoodStorage foodStorage = FoodStorage.getInstance();
-	//에러 체크 클래스 
-	ErrorCodes errorCodes = new ErrorCodes();
 	
 	//등록된 동물 전체 가져오기 
 	public List<Animals> getAnimals(){
@@ -26,29 +25,31 @@ public class AnimalService {
 	//동물 등록 
 	public Map<?,?> registerAnimals(FoodStorage fs){
 		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
-		errorCodes.userCheck(fs, jsonStorage);
+		if(JsonStorageUtil.userCheck(fs, jsonStorage)){
+			return jsonStorage;
+		}
 		
-		//false시 등록된 이름이 존재하고
-		//true시 등록된 이름이 없다 
-		boolean flag = true;
+		//false시 등록된 이름이 없다
+		//true시 등록된 이름이 존재한다.
+		boolean checkName_TrueMeansNameExists = false;
 		
 		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
 			for(int j = 0; j < fs.getAnimal().size(); j++){
 				if(foodStorage.getAnimal().get(i).getName().equals(fs.getAnimal().get(j).getName())){
-					flag = !flag;
+					checkName_TrueMeansNameExists = true;
 					break;
 				}
 			}
 		}
 		
-		if(!flag){
-			errorCodes.exist(fs, jsonStorage);
+		if(checkName_TrueMeansNameExists){
+			JsonStorageUtil.exist(fs, jsonStorage);
 		} else {
 			for(int i = 0; i < fs.getAnimal().size(); i++){
 				fs.getAnimal().get(i).setId(foodStorage.idGenerator());
 				foodStorage.getAnimal().add(fs.getAnimal().get(i));
 			}
-			errorCodes.success(fs, jsonStorage);
+			JsonStorageUtil.success(fs, jsonStorage);
 		}
 		
 		return jsonStorage;
@@ -59,43 +60,33 @@ public class AnimalService {
 		System.out.println(foodStorage.toString());
 		Map<String, Object> jsonStorage = new LinkedHashMap<String, Object>();
 		
-		errorCodes.userCheck(fs, jsonStorage);
-		
-		//flag는 동물 아이디가 존재여부 확인 
-		//false = id가 없다
-		//true = id가 있다
-		boolean flag = false;
+		if(JsonStorageUtil.userCheck(fs, jsonStorage)){
+			return jsonStorage;
+		}		
 		//받은 제이슨 값 동물하나 당 존재여부 확인 
-		boolean idValidation = false;
-		
-		int testing = -1;
+		boolean idValidation_TrueMeansIDExist = false;
+		int animalsFed = -1;
+		int j = 0;
 		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
-			
-			for(int j = 0; j < fs.getAnimal().size(); j++){
+			for(j = 0; j < fs.getAnimal().size(); j++){
 				if(foodStorage.getAnimal().get(i).getId().equals(fs.getAnimal().get(j).getId())){
 					foodStorage.setFood(fs.getAnimal().get(j).feed(foodStorage.getFood()));
 					System.err.println(foodStorage.getFood());
-					idValidation = true;
-					testing += 1;
+					idValidation_TrueMeansIDExist = true;
+					animalsFed += 1;
+					break;
+				}else {
+					idValidation_TrueMeansIDExist = false;
 				}
 			}
-			//idValidation이 참일시, 해당 아이디는 존재한다는 뜻으로 flag에 true값을 대입
-			//testing은 animal리스트 아이디 존재 여부를 카운팅 해주는 변수, 즉 하나의 오차가 있을시 제이슨이랑 안맞다는 뜻. 
-			if(idValidation && testing == i){
-				flag = true;
-			} else {
-				flag = false;
-			}
-			idValidation = false;
 		}
-		
-		if(!flag){
-			errorCodes.noId(fs, jsonStorage);
+//		//idValidation이 참일시, 해당 아이디는 존재한다는 뜻으로 flag에 true값을 대입
+//		//testing은 animal리스트 아이디 존재 여부를 카운팅 해주는 변수, 즉 하나의 오차가 있을시 제이슨이랑 안맞다는 뜻. 
+		if(idValidation_TrueMeansIDExist && animalsFed == j){
+			JsonStorageUtil.success(fs, jsonStorage);
+			jsonStorage.put("food_left", foodStorage.getFood());			
 		} else {
-			jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
-			jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
-			jsonStorage.put("res_data", fs.getAnimal());
-			jsonStorage.put("food_left", foodStorage.getFood());
+			JsonStorageUtil.noId(fs, jsonStorage);
 		}
 		return jsonStorage;
 	}
@@ -171,9 +162,9 @@ public class AnimalService {
 			}
 		}
 		if(flag){
-			errorCodes.exist(fs, jsonStorage);
+			JsonStorageUtil.exist(fs, jsonStorage);
 		} else {
-			errorCodes.noId(fs, jsonStorage);
+			JsonStorageUtil.noId(fs, jsonStorage);
 		}
 		return jsonStorage;
 	}

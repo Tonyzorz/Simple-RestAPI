@@ -14,6 +14,8 @@ public class FoodStorage {
 	public int food;
 	public String name;
 	
+	private static FoodStorage instance;
+	
 	private FoodStorage() {
 		this.animal = new ArrayList<Animals>();
 		this.animal.add(new Turtle("turquoise"));
@@ -22,12 +24,11 @@ public class FoodStorage {
 		this.name = "Tom";
 	}
 	
-	private static class SingletonClass{
-		private static FoodStorage CREATE = new FoodStorage();
-	}
-	
 	public static FoodStorage getInstance(){
-		return SingletonClass.CREATE;
+		if(instance == null) {
+			instance = new FoodStorage();
+		}
+		return instance;
 	}
 
 	public void feed() {
@@ -40,11 +41,11 @@ public class FoodStorage {
 
 	public String idGenerator() {
 		int length = 6;
-		byte[] array = new byte[256];
+		byte[] array = new byte[100];
 		new Random().nextBytes(array);
 		
 		String randomString = new String(array, Charset.forName("UTF-8"));
-		
+
 		StringBuffer r = new StringBuffer();
 		
 		for(int k = 0; k < randomString.length(); k++){
@@ -56,7 +57,6 @@ public class FoodStorage {
 		}
 		return r.toString();
 	}
-
 
 	public ArrayList<Animals> getAnimal() {
 		return animal;

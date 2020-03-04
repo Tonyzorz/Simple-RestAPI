@@ -1,10 +1,10 @@
 package com.project.cudo.dao;
 
-public class Animals {
+public class Animals extends BaseAnimals {
 
-	public String name;
-	public String type;
-	public String id;
+	private String name;
+	private String type;
+	private String id;
 	
 	public Animals( String name, String type, String id) {
 		this.name = name;
@@ -38,9 +38,9 @@ public class Animals {
 				System.out.println("not enough minerals");
 			}
 		}
-		
 		return food;
 	}
+	
 	public String getId() {
 		return id;
 	}

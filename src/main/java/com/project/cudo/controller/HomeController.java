@@ -1,4 +1,4 @@
-package com.project.cudo;
+package com.project.cudo.controller;
 
 import java.text.DateFormat;
 import java.util.Date;

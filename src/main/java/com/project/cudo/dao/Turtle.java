@@ -1,30 +1,19 @@
 package com.project.cudo.dao;
 
-public class Turtle extends Animals{
+public class Turtle extends Animals {
 
-	public String name;
-	public String type;
-	public String id;
-
-	public Turtle(String name){
-		this.name = name;
-		this.type = this.getClass().getSimpleName();
+	public Turtle(String name) {
+		super(name, "Turtle", null);
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public int feed(int food) {
+		if (food >= 50) {
+			food -= 50;
+			System.out.println("you fed your bird 50g");
+		} else {
+			System.out.println("not enough minerals");
+		}
+		return food;
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 }
