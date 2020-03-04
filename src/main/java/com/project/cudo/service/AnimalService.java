@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.project.cudo.dao.Animals;
 import com.project.cudo.dao.FoodStorage;
 import com.project.cudo.util.ErrorCodes;
+import com.project.cudo.util.NameExistException;
 import com.project.cudo.util.JsonStorageUtil;
 
 @Service("AnimalService")
@@ -43,7 +44,9 @@ public class AnimalService {
 		}
 		
 		if(checkName_TrueMeansNameExists){
-			JsonStorageUtil.exist(fs, jsonStorage);
+			//JsonStorageUtil.exist(fs, jsonStorage);
+			System.out.println("Animal service throwing exception");
+			throw new NameExistException();
 		} else {
 			for(int i = 0; i < fs.getAnimal().size(); i++){
 				fs.getAnimal().get(i).setId(foodStorage.idGenerator());
@@ -162,7 +165,8 @@ public class AnimalService {
 			}
 		}
 		if(flag){
-			JsonStorageUtil.exist(fs, jsonStorage);
+			//JsonStorageUtil.exist(fs, jsonStorage);
+			//throw new NameExistException();
 		} else {
 			JsonStorageUtil.noId(fs, jsonStorage);
 		}
