@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class FoodStorage {
 
 	private ArrayList<Animals> animal;
-	public int food;
-	public String name;
+	private int food;
+	private String name;
 	
 	private static FoodStorage instance;
 	

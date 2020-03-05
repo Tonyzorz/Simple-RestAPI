@@ -32,7 +32,7 @@ public class AnimalController {
 	
 	//동물 등록 
 	@RequestMapping(value = "/registerAnimals", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Map<?,?> registerAnimals(@RequestBody FoodStorage fs){
+	public @ResponseBody Map<?,?> registerAnimals(@RequestBody FoodStorage fs) {
 		return animalService.registerAnimals(fs);
 	}
 	
@@ -41,6 +41,9 @@ public class AnimalController {
 	public Map<?,?> feedAnimals(@RequestBody FoodStorage fs){
 		return animalService.feedAnimals(fs);
 	}
+	
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 	
 	//update list one animal
 	@RequestMapping(value = "/updateAnimal/{id}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -67,6 +70,5 @@ public class AnimalController {
 	public Map<?,?> getAnimal(@PathVariable("id") String id){
 		return animalService.getAnimal(id);
 	}
-	
 	
 }
