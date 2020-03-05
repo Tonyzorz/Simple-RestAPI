@@ -14,21 +14,20 @@ public class ExceptionHandler{
 	
 	@ResponseBody
 	@org.springframework.web.bind.annotation.ExceptionHandler(NameExistException.class)
-	public Map<?,?> nameExist(){
-		return NameExistException.nameExist();
+	public Map<?,?> nameExist(Exception ex){
+		return ((NameExistException) ex).toMap();
 	}
 	
 	@ResponseBody
 	@org.springframework.web.bind.annotation.ExceptionHandler(UserCheckException.class)
-	public Map<?,?> userCheck(){
-		return UserCheckException.userCheck();
+	public Map<?,?> userCheck(Exception ex){
+		return ((UserCheckException) ex).toMap();
 	}
 	
 	@ResponseBody
 	@org.springframework.web.bind.annotation.ExceptionHandler(NoIdExistException.class)
-	public Map<?,?> noIdExistk(){
-		return NoIdExistException.noId();
+	public Map<?,?> noIdExistk(Exception ex){
+		return ((NoIdExistException) ex).toMap();
 	}
-	
 	
 }

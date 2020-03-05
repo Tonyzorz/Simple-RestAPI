@@ -34,9 +34,17 @@ public class FoodStorage {
 	public void feed() {
 		for(int i = 0; i < animal.size(); i++){
 			Animals animals = animal.get(i);
-			food = animals.feed(food);
+			if(animals instanceof Cat) {
+				Cat cat = (Cat)animals;
+				food = cat.feed(food);
+			}else if(animals instanceof Turtle){
+				Turtle turtle = (Turtle) animals;
+				food = turtle.feed(food);
+			} else if(animals instanceof Bird){
+				Bird bird = (Bird) animals;
+				food = bird.feed(food);
+			}
 		}
-		System.out.println("total remaining food is : " + food);
 	}
 
 	public String idGenerator() {

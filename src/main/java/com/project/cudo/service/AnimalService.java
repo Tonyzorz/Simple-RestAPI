@@ -7,7 +7,10 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.project.cudo.dao.Animals;
+import com.project.cudo.dao.Bird;
+import com.project.cudo.dao.Cat;
 import com.project.cudo.dao.FoodStorage;
+import com.project.cudo.dao.Turtle;
 import com.project.cudo.util.ErrorCodes;
 import com.project.cudo.util.JsonStorageUtil;
 import com.project.cudo.util.exceptionClass.NameExistException;
@@ -22,17 +25,16 @@ public class AnimalService {
 
 	//등록된 동물 전체 가져오기 
 	public List<Animals> getAnimals(){
-		System.out.println(jsonStorage.toString());
 		return foodStorage.getAnimal();
 	}
 	
 	//동물 등록 
 	public Map<?,?> registerAnimals(FoodStorage fs){
 		
+		//User "Tom" check utility method
 		JsonStorageUtil.userCheck(fs);
 		
-		//false시 등록된 이름이 없다
-		//true시 등록된 이름이 존재한다.
+		//동물 이름 중복 확인 
 		boolean checkName_TrueMeansNameExists = false;
 		
 		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
@@ -47,10 +49,22 @@ public class AnimalService {
 		if(checkName_TrueMeansNameExists){
 			throw new NameExistException();
 		} else {
+			//등록된 동물마다 FoodStorage안에 있는 idGenerator통해 랜덤 아이디 등록 
 			for(int i = 0; i < fs.getAnimal().size(); i++){
-				fs.getAnimal().get(i).setId(foodStorage.idGenerator());
-				foodStorage.getAnimal().add(fs.getAnimal().get(i));
+				Animals tmp = fs.getAnimal().get(i);
+				
+				if(tmp.getType().equals("Cat")) {
+					Cat cat = new Cat(tmp.getName());
+					foodStorage.getAnimal().add(cat);
+				}else if(tmp.getType().equals("Turtle")){
+					Turtle turtle = (Turtle) tmp;
+					foodStorage.getAnimal().add(turtle);
+				}else if(tmp.getType().equals("Bird")){
+					Bird bird = (Bird) tmp;
+					foodStorage.getAnimal().add(bird);
+				}
 			}
+			//성공시 호출하는 메소드. 
 			JsonStorageUtil.success(jsonStorage);
 		}
 		
@@ -59,15 +73,22 @@ public class AnimalService {
 	
 	//동물 먹이주기 
 	public Map<?,?> feedAnimals(FoodStorage fs){
+		//아이디 톰 체크 
 		JsonStorageUtil.userCheck(fs);
 		
+		//먹이를 받은 동물 수 
 		int animalsFed = 0;
+		//제이슨 바디로 받은 동물 수 
 		int jsonNumberOfAnimals = 0;
 		
+		//동물이 먹이를 받을 시 animalsFed는 +1 증가 
 		for(int i = 0; i < foodStorage.getAnimal().size(); i++){
+			String foodStorageId = foodStorage.getAnimal().get(i).getId();
 			for(jsonNumberOfAnimals = 0; jsonNumberOfAnimals < fs.getAnimal().size(); jsonNumberOfAnimals++){
-				if(foodStorage.getAnimal().get(i).getId().equals(fs.getAnimal().get(jsonNumberOfAnimals).getId())){
-					foodStorage.setFood(fs.getAnimal().get(jsonNumberOfAnimals).feed(foodStorage.getFood()));
+				//아이디가 똑같을 시 실행 
+				String jsonAnimalId = fs.getAnimal().get(jsonNumberOfAnimals).getId();
+				if(foodStorageId.equals(jsonAnimalId)){
+					foodStorage.setFood(foodStorage.getAnimal().get(jsonNumberOfAnimals).feed(foodStorage.getFood()));
 					System.err.println(foodStorage.getFood());
 					animalsFed += 1;
 				}
@@ -102,11 +123,12 @@ public class AnimalService {
 			}
 		}
 		if(animalIdExist){
-			return JsonStorageUtil.success(jsonStorage);
+			JsonStorageUtil.success(jsonStorage);
 		} else {
 			throw new NoIdExistException();
 		}
-		
+		return jsonStorage;
+
 	}
 	
 	//해당 아이디 동물 가져오기 
@@ -146,10 +168,11 @@ public class AnimalService {
 		}
 		
 		if(urlIdNFoodStorageIdMatch){
-			return JsonStorageUtil.success(jsonStorage);
+			JsonStorageUtil.success(jsonStorage);
 		} else {
 			throw new NoIdExistException();
 		}
+		return jsonStorage;
 	}
 	
 }

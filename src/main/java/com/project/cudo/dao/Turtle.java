@@ -3,7 +3,7 @@ package com.project.cudo.dao;
 public class Turtle extends Animals {
 
 	public Turtle(String name) {
-		super(name, "Turtle", null);
+		super(name, "Turtle", FoodStorage.getInstance().idGenerator());
 	}
 
 	@Override
@@ -16,4 +16,5 @@ public class Turtle extends Animals {
 		}
 		return food;
 	}
+	
 }
