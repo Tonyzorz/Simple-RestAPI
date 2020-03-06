@@ -63,6 +63,7 @@ public class AnimalService {
 					
 				}else if(tmp.getType().equals("Turtle")){
 					
+					
 					Turtle turtle = new Turtle(tmp.getName());
 					turtle.setId(randomId);
 					foodStorage.getAnimal().add(turtle);
