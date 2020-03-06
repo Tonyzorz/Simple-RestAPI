@@ -3,7 +3,7 @@ package com.project.cudo.dao;
 public class Cat extends Animals{
 
 	public Cat(String name) {
-		super(name, "Cat", FoodStorage.getInstance().idGenerator());
+		super(name, "Cat", null);
 	}
 	
 	@Override
@@ -14,6 +14,6 @@ public class Cat extends Animals{
 		} else {
 			System.out.println("not enough minerals");
 		}		
-		return 0;
+		return food;
 	}
 }

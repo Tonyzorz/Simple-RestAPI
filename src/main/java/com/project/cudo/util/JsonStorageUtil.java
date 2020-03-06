@@ -17,7 +17,7 @@ public class JsonStorageUtil {
 	}
 
 	//정상 처리 200 
-	public static void success(Map<String, Object> jsonStorage){
+	public static void jsonDataSuccess(Map<String, Object> jsonStorage){
 		jsonStorage.put("res_code", ErrorCodes.RES_CODE_200);
 		jsonStorage.put("res_msg", ErrorCodes.RES_MSG_200);
 		jsonStorage.put("res_data", foodStorage.getAnimal());

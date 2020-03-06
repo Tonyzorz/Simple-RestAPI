@@ -4,7 +4,7 @@ public class Bird extends Animals{
 
 	
 	public Bird(String name){
-		super(name, "Bird", FoodStorage.getInstance().idGenerator());
+		super(name, "Bird", null);
 	}
 
 	@Override
@@ -15,6 +15,6 @@ public class Bird extends Animals{
 		} else {
 			System.out.println("not enough minerals");
 		}		
-		return 0;
+		return food;
 	}
 }

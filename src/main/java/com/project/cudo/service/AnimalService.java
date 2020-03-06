@@ -25,6 +25,7 @@ public class AnimalService {
 
 	//등록된 동물 전체 가져오기 
 	public List<Animals> getAnimals(){
+		System.out.println(foodStorage.toString());
 		return foodStorage.getAnimal();
 	}
 	
@@ -52,20 +53,30 @@ public class AnimalService {
 			//등록된 동물마다 FoodStorage안에 있는 idGenerator통해 랜덤 아이디 등록 
 			for(int i = 0; i < fs.getAnimal().size(); i++){
 				Animals tmp = fs.getAnimal().get(i);
+				String randomId = foodStorage.idGenerator();
 				
 				if(tmp.getType().equals("Cat")) {
+					
 					Cat cat = new Cat(tmp.getName());
+					cat.setId(randomId);
 					foodStorage.getAnimal().add(cat);
+					
 				}else if(tmp.getType().equals("Turtle")){
-					Turtle turtle = (Turtle) tmp;
+					
+					Turtle turtle = new Turtle(tmp.getName());
+					turtle.setId(randomId);
 					foodStorage.getAnimal().add(turtle);
+					
 				}else if(tmp.getType().equals("Bird")){
-					Bird bird = (Bird) tmp;
+					
+					Bird bird = new Bird(tmp.getName());
+					bird.setId(randomId);
 					foodStorage.getAnimal().add(bird);
+					
 				}
 			}
 			//성공시 호출하는 메소드. 
-			JsonStorageUtil.success(jsonStorage);
+			JsonStorageUtil.jsonDataSuccess(jsonStorage);
 		}
 		
 		return jsonStorage;
@@ -97,7 +108,7 @@ public class AnimalService {
 		
 		//jsonNumberOfAnimals 와 먹이를 받은 동물 수가 똑같으면 정상적으로 처리 
 		if(animalsFed == jsonNumberOfAnimals){
-			JsonStorageUtil.success(jsonStorage);
+			JsonStorageUtil.jsonDataSuccess(jsonStorage);
 			jsonStorage.put("food_left", foodStorage.getFood());
 			return jsonStorage;
 		} else {
@@ -123,7 +134,7 @@ public class AnimalService {
 			}
 		}
 		if(animalIdExist){
-			JsonStorageUtil.success(jsonStorage);
+			JsonStorageUtil.jsonDataSuccess(jsonStorage);
 		} else {
 			throw new NoIdExistException();
 		}
@@ -168,7 +179,7 @@ public class AnimalService {
 		}
 		
 		if(urlIdNFoodStorageIdMatch){
-			JsonStorageUtil.success(jsonStorage);
+			JsonStorageUtil.jsonDataSuccess(jsonStorage);
 		} else {
 			throw new NoIdExistException();
 		}
